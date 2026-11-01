@@ -32,3 +32,18 @@ public static class Messages
         string.Format(CultureInfo.CurrentCulture, Get(key), args);
 }
 ```
+
+## צד לקוח: `Client/ServerMessages.cs`
+שגיאה מהשרת (WCF / SOAP) מגיעה לקליינט עטופה בטקסט ארוך באנגלית. הקלאס מוצא בתוכה איזה Key מה-RESX מופיע ומחזיר את ה-Value שלו.
+Key עם `{0}` הופך לתבנית, כך ש"…עבור העץ אלון" נמצא לפי "…עבור העץ {0}", והערך "אלון" מוצב ב-Value.
+
+```csharp
+var messages = ServerMessages.FromResxFile("Messages.resx");
+// או מ-RESX שמוטמע בפרויקט: new ServerMessages(Properties.Resources.ResourceManager)
+
+try { client.DoSomething(); }
+catch (Exception ex) { MessageBox.Show(messages.Translate(ex)); }
+```
+- קודם נבדק `FaultException<ExceptionDetail>.Detail` (ההודעה המקורית מהשרת), אחר כך ה-Message של כל שרשרת ה-InnerException ובסוף `ex.ToString()`.
+- הודעה שלא נמצאה ב-RESX: מוחזרת השורה הראשונה בעברית מתוך השגיאה; אם אין עברית בכלל: `DefaultMessage`.
+- `Translate(string)` עובד גם על טקסט שגיאה גולמי.

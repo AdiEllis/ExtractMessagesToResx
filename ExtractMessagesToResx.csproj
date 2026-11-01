@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <Compile Remove="samples/**" />
+    <Compile Remove="Client/**" />
   </ItemGroup>
 
 </Project>
