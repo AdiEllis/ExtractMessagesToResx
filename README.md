@@ -45,5 +45,5 @@ try { client.DoSomething(); }
 catch (Exception ex) { MessageBox.Show(messages.Translate(ex)); }
 ```
 - קודם נבדק `FaultException<ExceptionDetail>.Detail` (ההודעה המקורית מהשרת), אחר כך ה-Message של כל שרשרת ה-InnerException ובסוף `ex.ToString()`.
-- הודעה שלא נמצאה ב-RESX: מוחזרת השורה הראשונה בעברית מתוך השגיאה; אם אין עברית בכלל: `DefaultMessage`.
+- הודעה שלא נמצאה ב-RESX: מוחזרת השורה הראשונה בעברית מתוך השגיאה; אם אין עברית: ההודעה המקורית מהשרת (גם באנגלית); רק שגיאה ריקה לגמרי מחזירה `DefaultMessage`.
 - `Translate(string)` עובד גם על טקסט שגיאה גולמי.

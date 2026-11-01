@@ -29,7 +29,7 @@ using System.Xml.Linq;
 
 public class ServerMessages
 {
-    /// <summary>מה מוחזר כשלא נמצאה בשגיאה שום הודעה בעברית</summary>
+    /// <summary>מה מוחזר כשהשגיאה ריקה לגמרי (אין בה שום טקסט)</summary>
     public string DefaultMessage { get; set; } = "אירעה שגיאה, נסו שוב מאוחר יותר";
 
     class Entry
@@ -86,14 +86,20 @@ public class ServerMessages
     public string Translate(Exception ex)
     {
         string result;
-        return TryTranslate(ex, out result) ? result : (ExtractHebrew(ex) ?? DefaultMessage);
+        if (TryTranslate(ex, out result)) return result;
+        // לא ב-RESX: ההודעה בעברית, ואם אין - ההודעה המקורית מהשרת (גם באנגלית)
+        return ExtractHebrew(ex)
+            ?? CandidateTexts(ex).FirstOrDefault(t => !string.IsNullOrWhiteSpace(t))
+            ?? DefaultMessage;
     }
 
     /// <summary>מחזיר את ה-Value מה-RESX להודעה שבתוך טקסט השגיאה</summary>
     public string Translate(string errorText)
     {
         string result;
-        return TryTranslate(errorText, out result) ? result : (ExtractHebrew(errorText) ?? DefaultMessage);
+        if (TryTranslate(errorText, out result)) return result;
+        return ExtractHebrew(errorText)
+            ?? (string.IsNullOrWhiteSpace(errorText) ? DefaultMessage : errorText);
     }
 
     public bool TryTranslate(Exception ex, out string result)
